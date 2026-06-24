@@ -59,7 +59,7 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
 - `PATCH /bookings/:id/confirm` - Confirm a booking (owner only)
 - `PATCH /bookings/:id/reject` - Reject a booking (owner only)
 
-###
+### Messages
 - `GET /listings/:listing_id/messages` - List messages for a listing (authenticated participant only)
 - `POST /listings/:listing_id/messages` - Create a message for a listing (authenticated participant only)
 
@@ -79,8 +79,10 @@ Tokens expire after 24 hours.
 
 ## Testing
 
+Run the test suite:
+
 ```bash
-bundle exec rails test
+bundle exec rspec
 ```
 
 ## Development
