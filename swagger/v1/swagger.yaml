@@ -1,0 +1,312 @@
+---
+openapi: 3.0.1
+info:
+  title: RV Marketplace API
+  version: 1.0.0
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  "/register":
+    post:
+      summary: Register a new user
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '201':
+          description: user registered
+        '422':
+          description: invalid input
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: Jane
+                    email:
+                      type: string
+                      example: jane@example.com
+                    password:
+                      type: string
+                      example: password
+                    password_confirmation:
+                      type: string
+                      example: password
+                  required:
+                  - name
+                  - email
+                  - password
+                  - password_confirmation
+              required:
+              - user
+  "/login":
+    post:
+      summary: Login and receive JWT token
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: login successful
+        '401':
+          description: invalid credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: jane@example.com
+                    password:
+                      type: string
+                      example: password
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+  "/listings/{listing_id}/bookings":
+    post:
+      summary: Create a booking request for a listing
+      tags:
+      - Bookings
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: listing_id
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '201':
+          description: booking created by non-owner
+        '403':
+          description: owner cannot book own listing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                booking:
+                  type: object
+                  properties:
+                    start_date:
+                      type: string
+                      format: date
+                      example: '2026-07-01'
+                    end_date:
+                      type: string
+                      format: date
+                      example: '2026-07-05'
+                  required:
+                  - start_date
+                  - end_date
+              required:
+              - booking
+  "/bookings":
+    get:
+      summary: List bookings for authenticated user (as hirer or owner)
+      tags:
+      - Bookings
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: bookings returned
+  "/bookings/{id}/confirm":
+    patch:
+      summary: Confirm a booking (listing owner only)
+      tags:
+      - Bookings
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: confirmed by owner
+        '403':
+          description: forbidden for non-owner
+  "/bookings/{id}/reject":
+    patch:
+      summary: Reject a booking (listing owner only)
+      tags:
+      - Bookings
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: rejected by owner
+  "/listings":
+    get:
+      summary: List all RV listings
+      tags:
+      - Listings
+      responses:
+        '200':
+          description: listings returned
+    post:
+      summary: Create a new RV listing
+      tags:
+      - Listings
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: listing created
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rv_listing:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: Cozy Camper
+                    description:
+                      type: string
+                      example: Great for weekends
+                    location:
+                      type: string
+                      example: Melbourne
+                    price_per_day:
+                      type: number
+                      example: 120
+                  required:
+                  - title
+                  - description
+                  - location
+                  - price_per_day
+              required:
+              - rv_listing
+  "/listings/{id}":
+    parameters:
+    - name: id
+      in: path
+      schema:
+        type: integer
+      required: true
+    get:
+      summary: Show a single RV listing
+      tags:
+      - Listings
+      responses:
+        '200':
+          description: listing found
+    patch:
+      summary: Update an RV listing (owner only)
+      tags:
+      - Listings
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: updated by owner
+        '403':
+          description: forbidden for non-owner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rv_listing:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: Updated RV Title
+              required:
+              - rv_listing
+    delete:
+      summary: Delete an RV listing (owner only)
+      tags:
+      - Listings
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: deleted by owner
+  "/listings/{listing_id}/messages":
+    parameters:
+    - name: listing_id
+      in: path
+      schema:
+        type: integer
+      required: true
+    get:
+      summary: List messages for a listing (participants only)
+      tags:
+      - Messages
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: participant can list messages
+        '403':
+          description: stranger forbidden
+    post:
+      summary: Create a message for a listing (participants only)
+      tags:
+      - Messages
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: participant can create message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: object
+                  properties:
+                    content:
+                      type: string
+                      example: Is this RV available next weekend?
+                  required:
+                  - content
+              required:
+              - message
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com
