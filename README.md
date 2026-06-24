@@ -64,8 +64,9 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
 - `POST /listings/:listing_id/messages` - Create a message for a listing (authenticated participant only)
 
 Participant means:
-The listing owner, or
-A user who has a booking on that listing
+- The listing owner, 
+or
+- A user who has a booking on that listing
 
 
 ## Authentication

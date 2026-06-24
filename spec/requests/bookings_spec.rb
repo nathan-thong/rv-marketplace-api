@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe "Bookings", type: :request do
-  let!(:owner) { User.create!(name: "Owner", email: "owner-b@example.com", password: "password", password_confirmation: "password") }
-  let!(:hirer) { User.create!(name: "Hirer", email: "hirer-b@example.com", password: "password", password_confirmation: "password") }
-  let!(:other) { User.create!(name: "Other", email: "other-b@example.com", password: "password", password_confirmation: "password") }
+  let!(:owner) { User.create!(name: "Owner", email: unique_email("owner-b"), password: "password", password_confirmation: "password") }
+  let!(:hirer) { User.create!(name: "Hirer", email: unique_email("hirer-b"), password: "password", password_confirmation: "password") }
+  let!(:other) { User.create!(name: "Other", email: unique_email("other-b"), password: "password", password_confirmation: "password") }
   let!(:listing) { RvListing.create!(title: "RV One", description: "Nice", location: "Sydney", price_per_day: 100, user: owner) }
   let!(:booking) { Booking.create!(start_date: Date.today + 1, end_date: Date.today + 2, status: "pending", user: hirer, rv_listing: listing) }
 
