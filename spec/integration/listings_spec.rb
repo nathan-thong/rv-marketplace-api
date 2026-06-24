@@ -107,6 +107,101 @@ RSpec.describe "Listings API", type: :request do
         required: [ "rv_listing" ]
       }
 
+    put "Replace an RV listing (owner only)" do
+      tags "Listings"
+      consumes "application/json"
+      produces "application/json"
+      security [ bearerAuth: [] ]
+
+      parameter name: :payload, in: :body, schema: {
+        type: :object,
+        properties: {
+          rv_listing: {
+            type: :object,
+            properties: {
+              title: { type: :string, example: "Updated RV Title" }
+            }
+          }
+        },
+        required: [ "rv_listing" ]
+      }
+
+      response "200", "updated by owner" do
+        let!(:owner) do
+          User.create!(
+            name: "Owner",
+            email: unique_email("owner-put"),
+            password: "password",
+            password_confirmation: "password"
+          )
+        end
+
+        let!(:listing) do
+          RvListing.create!(
+            title: "RV One",
+            description: "Nice",
+            location: "Sydney",
+            price_per_day: 100,
+            user: owner
+          )
+        end
+
+        let(:id) { listing.id }
+        let(:Authorization) { auth_headers(owner)["Authorization"] }
+        let(:payload) do
+          {
+            rv_listing: {
+              title: "Updated RV Title"
+            }
+          }
+        end
+
+        run_test!
+      end
+
+      response "403", "forbidden for non-owner" do
+        let!(:owner) do
+          User.create!(
+            name: "Owner",
+            email: unique_email("owner-put-forbid"),
+            password: "password",
+            password_confirmation: "password"
+          )
+        end
+
+        let!(:other_user) do
+          User.create!(
+            name: "Other",
+            email: unique_email("other-put-forbid"),
+            password: "password",
+            password_confirmation: "password"
+          )
+        end
+
+        let!(:listing) do
+          RvListing.create!(
+            title: "RV One",
+            description: "Nice",
+            location: "Sydney",
+            price_per_day: 100,
+            user: owner
+          )
+        end
+
+        let(:id) { listing.id }
+        let(:Authorization) { auth_headers(other_user)["Authorization"] }
+        let(:payload) do
+          {
+            rv_listing: {
+              title: "Hacked"
+            }
+          }
+        end
+
+        run_test!
+      end
+    end
+
       response "200", "updated by owner" do
         let!(:owner) { User.create!(name: "Owner", email: unique_email("owner-update"), password: "password", password_confirmation: "password") }
         let!(:listing) { RvListing.create!(title: "RV One", description: "Nice", location: "Sydney", price_per_day: 100, user: owner) }

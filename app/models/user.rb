@@ -5,14 +5,14 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  before_save :downcase_email
+  before_validation :normalize_email
 
   validates :name, presence: true
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   private
 
-  def downcase_email
-    email.downcase!
+  def normalize_email
+    self.email = email.to_s.strip.downcase
   end
 end

@@ -35,6 +35,24 @@ RSpec.describe "Auth", type: :request do
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
+
+    it "downcases the email before saving" do
+      email = "Owner#{unique_email("case")}"
+      post "/register", params: {
+        user: {
+          name: "Owner",
+          email: email,
+          password: "password123",
+          password_confirmation: "password123"
+        }
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      body = JSON.parse(response.body)
+
+      expect(body["user"]["email"]).to eq(email.downcase)
+      expect(User.last.email).to eq(email.downcase)
+    end
   end
 
   describe "POST /login" do
@@ -52,6 +70,50 @@ RSpec.describe "Auth", type: :request do
 
     it "rejects invalid credentials" do
       post "/login", params: { user: { email: user.email, password: "wrong" } }, as: :json
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "accepts email case-insensitively" do
+      login_email = unique_email("owner")
+
+      User.create!(
+        name: "Owner",
+        email: login_email,
+        password: "password123",
+        password_confirmation: "password123"
+      )
+
+      post "/login", params: {
+        user: {
+          email: login_email.upcase,
+          password: "password123"
+        }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+
+      expect(body["token"]).to be_present
+      expect(body["user"]["email"]).to eq(login_email)
+    end
+
+    it "rejects a bad password" do
+      login_email = unique_email("ownerbad")
+
+      User.create!(
+        name: "Owner",
+        email: login_email,
+        password: "password123",
+        password_confirmation: "password123"
+      )
+
+      post "/login", params: {
+        user: {
+          email: login_email.upcase,
+          password: "wrong-password"
+        }
+      }, as: :json
 
       expect(response).to have_http_status(:unauthorized)
     end

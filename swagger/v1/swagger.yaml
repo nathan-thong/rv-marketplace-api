@@ -226,6 +226,32 @@ paths:
       responses:
         '200':
           description: listing found
+    put:
+      summary: Replace an RV listing (owner only)
+      tags:
+      - Listings
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: updated by owner
+        '403':
+          description: forbidden for non-owner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rv_listing:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: Updated RV Title
+              required:
+              - rv_listing
     patch:
       summary: Update an RV listing (owner only)
       tags:
@@ -306,7 +332,4 @@ paths:
               required:
               - message
 servers:
-- url: https://{defaultHost}
-  variables:
-    defaultHost:
-      default: www.example.com
+- url: http://localhost:3000
