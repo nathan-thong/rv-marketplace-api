@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: rv_marketplace_production
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rv_marketplace"]
+      test: ["CMD-SHELL", "pg_isready -U rv_marketplace -d rv_marketplace_production"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,7 +22,11 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://rv_marketplace:password@db:5432/rv_marketplace_production
-      JWT_SECRET: ${JWT_SECRET:-change-me-generate-with-rails-secret}
+      DB_HOST: db
+      DB_USERNAME: rv_marketplace
+      DB_PASSWORD: password
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      JWT_SECRET: ${JWT_SECRET}
 
 volumes:
   postgres_data:

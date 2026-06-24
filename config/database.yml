@@ -87,9 +87,10 @@ test:
 production:
   primary: &primary_production
     <<: *default
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
     database: rv_marketplace_production
-    username: rv_marketplace
-    password: <%= ENV["RV_MARKETPLACE_DATABASE_PASSWORD"] %>
+    username: <%= ENV.fetch("DB_USERNAME", "rv_marketplace") %>
+    password: <%= ENV.fetch("DB_PASSWORD", ENV["RV_MARKETPLACE_DATABASE_PASSWORD"]) %>
   cache:
     <<: *primary_production
     database: rv_marketplace_production_cache
