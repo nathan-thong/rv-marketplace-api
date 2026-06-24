@@ -106,7 +106,7 @@ A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included f
    ```bash
    cp .env.example .env
    ```
-   Set `RAILS_MASTER_KEY` to the contents of `config/master.key`, and set `JWT_SECRET` to a random secret (`bundle exec rails secret`).
+   Set `JWT_SECRET` to a random secret (`bundle exec rails secret`).
 
 2. **Build and start**
    ```bash
@@ -126,7 +126,7 @@ A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included f
 | `web` | Built from local `Dockerfile` | `3000 → 80` |
 | `db` | `postgres:16-alpine` | internal only |
 
-The `web` service reads `DATABASE_URL`, `RAILS_MASTER_KEY`, and `JWT_SECRET` from the environment (or `.env` file). The database password in `docker-compose.yml` is intentionally simple — override it for any non-local deployment.
+The `web` service reads `DATABASE_URL` and `JWT_SECRET` from the environment (or `.env` file). The database password in `docker-compose.yml` is intentionally simple — override it for any non-local deployment.
 
 ## Development
 
