@@ -96,6 +96,34 @@ Swagger/OpenAPI documentation:
 - http://localhost:3000/api-docs
 
 
+## Frontend (Waypoint)
+
+A static single-page client is bundled in `public/frontend/` and served directly by Rails at `/frontend/index.html`. No separate build step or deployment is needed — because it lives in `public/`, it is served by the same Rails process and makes same-origin API requests.
+
+### Features
+
+- **Listings marketplace** — browse all RV listings in a responsive card grid
+- **Search & sort** — filter by title/location/description with live client-side search; sort by newest, oldest, price ascending, or price descending
+- **Statistics bar** — live counts of total listings, unique locations, and price range
+- **Authentication** — login and register via modal; JWT is persisted to `localStorage` for simplicity; a production deployment should prefer HttpOnly cookies to mitigate XSS token theft.
+- **Listing management** — authenticated owners can create, edit, and delete their own listings via modal forms
+- **Booking workflow** — hirers can submit a booking request (with start/end date picker) from any listing detail view; owners can confirm or reject pending requests from the Bookings panel
+- **Bookings panel** — dedicated view showing all bookings where the current user is either the hirer or the listing owner
+
+### Accessing the frontend
+
+Start the Rails server and open:
+```
+http://localhost:3000/frontend/index.html
+```
+
+### Pointing at a different API
+
+By default the page talks to the same host it is served from (relative URLs). To point it at a different deployed instance, append `?api=<absolute-url>`:
+```
+http://localhost:3000/frontend/index.html?api=https://your-api.example.com
+```
+
 ## Development
 
 - Linting: `bundle exec rubocop`
