@@ -96,6 +96,38 @@ Swagger/OpenAPI documentation:
 - http://localhost:3000/api-docs
 
 
+## Docker
+
+A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included for containerised development and deployment.
+
+### Quick start
+
+1. **Copy and fill in secrets**
+   ```bash
+   cp .env.example .env
+   ```
+   Set `RAILS_MASTER_KEY` to the contents of `config/master.key`, and set `JWT_SECRET` to a random secret (`bundle exec rails secret`).
+
+2. **Build and start**
+   ```bash
+   docker compose up --build
+   ```
+   The app runs at `http://localhost:3000`. The entrypoint automatically runs `db:prepare` (create + migrate) on first boot.
+
+3. **Stop and remove volumes**
+   ```bash
+   docker compose down -v
+   ```
+
+### Services
+
+| Service | Image | Port |
+|---------|-------|------|
+| `web` | Built from local `Dockerfile` | `3000 → 80` |
+| `db` | `postgres:16-alpine` | internal only |
+
+The `web` service reads `DATABASE_URL`, `RAILS_MASTER_KEY`, and `JWT_SECRET` from the environment (or `.env` file). The database password in `docker-compose.yml` is intentionally simple — override it for any non-local deployment.
+
 ## Development
 
 - Linting: `bundle exec rubocop`
