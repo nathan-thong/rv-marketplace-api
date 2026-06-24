@@ -3,6 +3,9 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # All secrets are supplied via environment variables; encrypted credentials are not used.
+  config.require_master_key = false
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
