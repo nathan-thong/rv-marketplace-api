@@ -1,0 +1,783 @@
+  :root{
+    --paper:#EEF0E9;
+    --card:#FBFAF6;
+    --ink:#15201A;
+    --pine:#1F3327;
+    --rust:#B6552E;
+    --moss:#6B7268;
+    --hairline:#D7DACB;
+    --ok:#3E7A4C;
+    --bad:#A33B2E;
+    --radius: 3px;
+  }
+
+  *{box-sizing:border-box;}
+  /* The browser's own [hidden]{display:none} rule loses to any author rule
+     of equal specificity that sets display on the same element (e.g.
+     .wp-form{display:flex}) because author styles beat the UA stylesheet
+     at a tie. Forcing it here is what actually makes .hidden = true/false
+     toggling work everywhere it's used. */
+  [hidden]{ display:none !important; }
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,.wp-display{
+    font-family:'Space Grotesk', 'Work Sans', sans-serif;
+    font-weight:700;
+    color:var(--pine);
+    margin:0;
+  }
+
+  .wp-mono{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  a{color:inherit;}
+
+  button{
+    font-family:inherit;
+    cursor:pointer;
+  }
+
+  :focus-visible{
+    outline:2px solid var(--rust);
+    outline-offset:2px;
+  }
+
+  /* background contour texture, used sparingly behind hero + stats */
+  .wp-contour{
+    background-image:
+      repeating-radial-gradient(circle at 18% 25%, transparent 0 38px, rgba(31,51,39,0.035) 39px 40px),
+      repeating-radial-gradient(circle at 82% 70%, transparent 0 52px, rgba(31,51,39,0.03) 53px 54px);
+    background-color:var(--paper);
+  }
+
+  .wp-shell{
+    max-width:1140px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  .wp-nav{
+    position:sticky;
+    top:0;
+    z-index:30;
+    background:var(--paper);
+    border-bottom:1px solid var(--hairline);
+  }
+  .wp-nav__row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 28px;
+    max-width:1140px;
+    margin:0 auto;
+  }
+  .wp-nav__brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:19px;
+    color:var(--pine);
+    letter-spacing:0.01em;
+  }
+  .wp-nav__mark{
+    width:26px;height:26px;
+    flex:none;
+  }
+  .wp-nav__tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--moss);
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:2px 7px;
+    letter-spacing:0.04em;
+  }
+
+  /* ---------- HERO ---------- */
+  .wp-hero{
+    padding:56px 0 36px;
+  }
+  .wp-hero__kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--rust);
+    margin:0 0 14px;
+  }
+  .wp-hero h1{
+    font-size:clamp(32px, 4.4vw, 50px);
+    line-height:1.08;
+    max-width:760px;
+    letter-spacing:-0.01em;
+  }
+  .wp-hero__sub{
+    margin:18px 0 0;
+    max-width:560px;
+    color:var(--moss);
+    font-size:17px;
+  }
+
+  /* connect bar */
+  .wp-btn{
+    border:1px solid var(--pine);
+    background:var(--pine);
+    color:#fff;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:2px;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .wp-btn:hover{ background:#16261c; }
+  .wp-btn:active{ transform:translateY(1px); }
+  .wp-btn--ghost{
+    background:transparent;
+    color:var(--pine);
+  }
+  .wp-btn--ghost:hover{ background:rgba(31,51,39,0.06); }
+  .wp-btn--rust{
+    border-color:var(--rust);
+    background:var(--rust);
+  }
+  .wp-btn--rust:hover{ background:#943F20; }
+  .wp-btn--ok{
+    border:1px solid var(--ok);
+    background:var(--ok);
+    color:#fff;
+  }
+  .wp-btn--ok:hover{ background:#2f6139; }
+  .wp-btn[disabled]{ opacity:.55; cursor:default; }
+
+  .wp-status{
+    margin-top:28px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--moss);
+  }
+  .wp-status__refresh{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    margin-left:4px;
+    background:none;
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:5px 10px 5px 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--moss);
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .wp-status__refresh:hover{ border-color:var(--pine); color:var(--pine); }
+  .wp-status__refresh svg{ width:12px; height:12px; }
+  .wp-status__refresh[disabled]{ opacity:.5; cursor:default; }
+  .wp-status__dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--moss);
+    flex:none;
+  }
+  .wp-status__dot[data-state="ok"]{ background:var(--ok); }
+  .wp-status__dot[data-state="bad"]{ background:var(--bad); }
+  .wp-status__dot[data-state="busy"]{ background:var(--rust); animation:wp-pulse 1s ease-in-out infinite; }
+  @media (prefers-reduced-motion:reduce){ .wp-status__dot[data-state="busy"]{ animation:none; } }
+  @keyframes wp-pulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  /* ---------- STATS ---------- */
+  .wp-stats{
+    background:var(--pine);
+    color:#fff;
+    margin-top:44px;
+  }
+  .wp-stats__row{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    max-width:1140px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+  .wp-stats__item{
+    padding:26px 18px;
+    border-left:1px solid rgba(255,255,255,0.12);
+  }
+  .wp-stats__item:first-child{ border-left:none; padding-left:0; }
+  .wp-stats__num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(22px, 3vw, 32px);
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .wp-stats__label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.62);
+    margin-top:6px;
+  }
+
+  /* ---------- CONTROLS ---------- */
+  .wp-controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    padding:34px 0 18px;
+  }
+  .wp-search{
+    position:relative;
+    flex:1 1 280px;
+    max-width:380px;
+  }
+  .wp-search input{
+    width:100%;
+    padding:10px 12px 10px 36px;
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    background:var(--card);
+    font-size:14px;
+    color:var(--ink);
+  }
+  .wp-search input:focus-visible{ outline:2px solid var(--rust); outline-offset:1px; }
+  .wp-search svg{
+    position:absolute;
+    left:11px; top:50%;
+    transform:translateY(-50%);
+    width:15px; height:15px;
+    color:var(--moss);
+  }
+  .wp-sort{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .wp-sort label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--moss);
+  }
+  .wp-sort select{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    padding:9px 10px;
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    background:var(--card);
+    color:var(--ink);
+  }
+  .wp-sort select:focus-visible{ outline:2px solid var(--rust); outline-offset:1px; }
+  .wp-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--moss);
+  }
+
+  /* ---------- GRID / TICKET CARDS ---------- */
+  .wp-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:34px 28px;
+    padding-bottom:64px;
+  }
+  @media (max-width:880px){ .wp-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:600px){ .wp-grid{ grid-template-columns:1fr; } }
+
+  .wp-card{
+    position:relative;
+    background:var(--card);
+    border:1px dashed var(--hairline);
+    border-radius:var(--radius);
+    padding:20px 18px 16px;
+    overflow:visible;
+    transition:box-shadow .15s ease, border-color .15s ease;
+  }
+  .wp-card:hover{
+    border-color:var(--moss);
+    box-shadow:0 4px 14px rgba(21,32,26,0.10);
+  }
+  .wp-card::before,
+  .wp-card::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:14px; height:14px;
+    background:var(--paper);
+    border-radius:50%;
+    transform:translateY(-50%);
+  }
+  .wp-card::before{ left:-8px; }
+  .wp-card::after{ right:-8px; }
+
+  .wp-card__no{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    color:#fff;
+    background:var(--pine);
+    padding:3px 8px;
+    border-radius:2px;
+    margin-bottom:12px;
+  }
+  .wp-card__title{
+    font-size:18px;
+    line-height:1.25;
+    margin:0 0 8px;
+    color:var(--pine);
+  }
+  .wp-card__loc{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    color:var(--moss);
+    margin-bottom:10px;
+  }
+  .wp-card__loc svg{ width:13px; height:13px; flex:none; }
+  .wp-card__desc{
+    font-size:14px;
+    color:#3C4A40;
+    margin:0 0 16px;
+    min-height:42px;
+  }
+  .wp-card__rule{
+    border:none;
+    border-top:1px dashed var(--hairline);
+    margin:0 0 14px;
+  }
+  .wp-card__foot{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+  }
+  .wp-card__price{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:18px;
+    color:var(--rust);
+  }
+  .wp-card__price small{
+    font-weight:400;
+    font-size:11px;
+    color:var(--moss);
+    margin-left:3px;
+  }
+  .wp-card__link{
+    background:none;
+    border:none;
+    padding:0;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--pine);
+    text-decoration:underline;
+    text-decoration-color:var(--hairline);
+  }
+  .wp-card__link:hover{ text-decoration-color:var(--pine); }
+
+  /* skeleton */
+  .wp-skel{
+    background:var(--card);
+    border:1px dashed var(--hairline);
+    border-radius:var(--radius);
+    padding:20px 18px;
+    height:176px;
+  }
+  .wp-skel__bar{
+    background:linear-gradient(90deg, #E7E5DC 25%, #EFEEE7 37%, #E7E5DC 63%);
+    background-size:400% 100%;
+    border-radius:2px;
+    animation:wp-shimmer 1.4s ease infinite;
+  }
+  @media (prefers-reduced-motion:reduce){ .wp-skel__bar{ animation:none; background:#E7E5DC; } }
+  @keyframes wp-shimmer{ 0%{background-position:100% 0;} 100%{background-position:0 0;} }
+
+  /* empty / error */
+  .wp-panel{
+    grid-column:1 / -1;
+    border:1px dashed var(--hairline);
+    border-radius:var(--radius);
+    padding:40px 32px;
+    text-align:left;
+    max-width:520px;
+  }
+  .wp-panel h3{ font-size:17px; margin-bottom:8px; }
+  .wp-panel p{ color:var(--moss); font-size:14px; margin:0 0 14px; }
+  .wp-panel--error{ border-color:rgba(163,59,46,0.4); background:rgba(163,59,46,0.05); }
+  .wp-panel code{
+    font-family:'IBM Plex Mono', monospace;
+    background:rgba(21,32,26,0.06);
+    padding:1px 5px;
+    border-radius:2px;
+    font-size:12.5px;
+  }
+
+  /* ---------- MODAL ---------- */
+  .wp-overlay{
+    position:fixed; inset:0;
+    background:rgba(20,30,24,0.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    z-index:100;
+  }
+  .wp-modal{
+    background:var(--card);
+    border-radius:4px;
+    max-width:520px;
+    width:100%;
+    max-height:86vh;
+    overflow-y:auto;
+    padding:30px 30px 26px;
+    position:relative;
+    box-shadow:0 18px 50px rgba(15,22,18,0.28);
+  }
+  .wp-modal__close{
+    position:absolute;
+    top:16px; right:16px;
+    background:none;
+    border:none;
+    width:30px; height:30px;
+    color:var(--moss);
+  }
+  .wp-modal__close:hover{ color:var(--ink); }
+  .wp-modal__no{ margin-bottom:14px; }
+  .wp-modal h2{ font-size:23px; margin-bottom:8px; }
+  .wp-modal__loc{
+    display:flex; align-items:center; gap:6px;
+    color:var(--moss); font-size:14px; margin-bottom:18px;
+  }
+  .wp-modal__loc svg{ width:14px; height:14px; }
+  .wp-modal__desc{ font-size:15px; color:#33402F; margin-bottom:20px; white-space:pre-wrap; }
+  .wp-modal__meta{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    border-top:1px dashed var(--hairline);
+    padding-top:16px;
+  }
+  .wp-modal__meta-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--moss);
+    margin-bottom:3px;
+  }
+  .wp-modal__meta-val{ font-family:'IBM Plex Mono', monospace; font-size:14px; color:var(--ink); }
+  .wp-modal__meta-val--price{ color:var(--rust); font-weight:600; }
+
+  /* ---------- FOOTER ---------- */
+  .wp-footer{
+    border-top:1px dashed var(--hairline);
+    padding:26px 0 40px;
+  }
+  .wp-footer p{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--moss);
+    margin:0;
+  }
+
+  /* ---------- NAV AUTH AREA ---------- */
+  .wp-nav__actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .wp-nav__user{
+    color:var(--moss);
+    font-size:12.5px;
+    padding:0 4px;
+  }
+  .wp-nav__divider{
+    width:1px;
+    height:18px;
+    background:var(--hairline);
+  }
+  .wp-btn--sm{
+    padding:7px 14px;
+    font-size:13px;
+  }
+
+  /* ---------- VIEW TOGGLE ---------- */
+  .wp-view-toggle{
+    display:flex;
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .wp-view-toggle__btn{
+    background:transparent;
+    border:none;
+    padding:7px 13px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--moss);
+    border-right:1px solid var(--hairline);
+  }
+  .wp-view-toggle__btn:last-child{ border-right:none; }
+  .wp-view-toggle__btn.is-active{
+    background:var(--pine);
+    color:#fff;
+  }
+  .wp-view-toggle__btn:hover:not(.is-active){ background:rgba(31,51,39,0.06); }
+
+  .wp-section-title{
+    font-size:19px;
+    margin:0;
+  }
+
+  /* ---------- MODAL VARIANTS / TABS ---------- */
+  .wp-modal--narrow{ max-width:400px; }
+
+  .wp-tabs{
+    display:flex;
+    gap:4px;
+    margin-bottom:22px;
+    border-bottom:1px solid var(--hairline);
+  }
+  .wp-tabs__btn{
+    background:none;
+    border:none;
+    padding:10px 4px 12px;
+    margin-right:18px;
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--moss);
+    border-bottom:2px solid transparent;
+    margin-bottom:-1px;
+  }
+  .wp-tabs__btn.is-active{
+    color:var(--pine);
+    border-bottom-color:var(--rust);
+  }
+
+  /* ---------- FORMS ---------- */
+  .wp-form{ display:flex; flex-direction:column; gap:16px; }
+  .wp-field{ display:flex; flex-direction:column; gap:6px; }
+  .wp-field label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--moss);
+  }
+  .wp-field input,
+  .wp-field textarea{
+    font-family:'Work Sans', sans-serif;
+    font-size:14.5px;
+    padding:10px 11px;
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    background:#fff;
+    color:var(--ink);
+    resize:vertical;
+  }
+  .wp-field input:focus-visible,
+  .wp-field textarea:focus-visible{
+    outline:2px solid var(--rust);
+    outline-offset:1px;
+  }
+  .wp-field__currency-wrap{ position:relative; }
+  .wp-field__currency-symbol{
+    position:absolute;
+    left:11px; top:50%;
+    transform:translateY(-50%);
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--moss);
+    font-size:14.5px;
+  }
+  .wp-field--currency input{ padding-left:24px; }
+  .wp-field-row{ display:flex; gap:12px; }
+  .wp-field-row .wp-field{ flex:1; }
+  .wp-form__error{
+    font-size:13px;
+    color:var(--bad);
+    margin:0;
+    min-height:1em;
+  }
+  .wp-form__success{
+    font-size:13px;
+    color:var(--ok);
+    margin:0;
+  }
+  .wp-form-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .wp-form-hint{
+    font-size:13px;
+    color:var(--moss);
+    margin:0;
+  }
+
+  /* ---------- STATUS PILLS ---------- */
+  .wp-pill{
+    display:inline-flex;
+    align-items:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:2px;
+    border:1px solid transparent;
+  }
+  .wp-pill--pending{ background:rgba(182,85,46,0.10); color:var(--rust); border-color:rgba(182,85,46,0.3); }
+  .wp-pill--confirmed{ background:rgba(62,122,76,0.10); color:var(--ok); border-color:rgba(62,122,76,0.3); }
+  .wp-pill--rejected{ background:rgba(163,59,46,0.08); color:var(--bad); border-color:rgba(163,59,46,0.25); }
+
+  .wp-card__mine{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.04em;
+    color:var(--moss);
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:2px 7px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
+
+  /* ---------- MODAL ACTIONS (detail modal) ---------- */
+  .wp-modal__actions{
+    border-top:1px dashed var(--hairline);
+    margin-top:20px;
+    padding-top:18px;
+  }
+  .wp-modal__actions-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .wp-modal__actions p{
+    font-size:13.5px;
+    color:var(--moss);
+    margin:0 0 12px;
+  }
+
+  .wp-inline-confirm{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .wp-inline-confirm__label{
+    font-size:13.5px;
+    color:var(--bad);
+    font-weight:500;
+  }
+  .wp-btn--danger{
+    border:1px solid var(--bad);
+    background:var(--bad);
+    color:#fff;
+  }
+  .wp-btn--danger:hover{ background:#8a3024; }
+
+  .wp-booking-form{ margin-top:4px; }
+
+  /* ---------- BOOKINGS LIST ---------- */
+  .wp-booking-row{
+    border:1px dashed var(--hairline);
+    border-radius:var(--radius);
+    background:var(--card);
+    padding:16px 18px;
+    margin-bottom:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .wp-booking-row__title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    color:var(--pine);
+    margin:0 0 4px;
+  }
+  .wp-booking-row__meta{
+    font-size:13px;
+    color:var(--moss);
+    margin:0 0 2px;
+  }
+  .wp-booking-row__dates{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--ink);
+    margin:6px 0 0;
+  }
+  .wp-booking-row__right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:10px;
+  }
+  .wp-booking-row__actions{
+    display:flex;
+    gap:8px;
+  }
+  .wp-booking-row__role{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--moss);
+  }
+
+  /* ---------- BANNER ---------- */
+  .wp-banner{
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:10px 13px;
+    font-size:13.5px;
+    color:var(--moss);
+    margin-bottom:14px;
+  }
+  .wp-banner--success{ border-color:rgba(62,122,76,0.35); background:rgba(62,122,76,0.06); color:var(--ok); }
+  .wp-banner--error{ border-color:rgba(163,59,46,0.35); background:rgba(163,59,46,0.06); color:var(--bad); }
+
+  .wp-sr-only{
+    position:absolute;
+    width:1px;height:1px;
+    overflow:hidden;
+    clip:rect(0 0 0 0);
+  }
+
+  @media (max-width:560px){
+    .wp-shell{ padding:0 18px; }
+    .wp-nav__row{ padding:16px 18px; flex-direction:column; align-items:flex-start; gap:12px; }
+    .wp-nav__actions{ width:100%; }
+    .wp-stats__row{ grid-template-columns:1fr; padding:0 18px; }
+    .wp-stats__item{ border-left:none; border-top:1px solid rgba(255,255,255,0.12); padding-left:0; }
+    .wp-stats__item:first-child{ border-top:none; }
+    .wp-controls{ flex-direction:column; align-items:stretch; }
+    .wp-search{ max-width:none; }
+    .wp-field-row{ flex-direction:column; }
+    .wp-booking-row{ flex-direction:column; }
+    .wp-booking-row__right{ align-items:flex-start; width:100%; }
+  }
+
