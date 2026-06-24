@@ -96,33 +96,37 @@ Swagger/OpenAPI documentation:
 - http://localhost:3000/api-docs
 
 
-## Frontend (Waypoint)
+## Docker
 
-A static single-page client is bundled in `public/frontend/` and served directly by Rails at `/frontend/index.html`. No separate build step or deployment is needed — because it lives in `public/`, it is served by the same Rails process and makes same-origin API requests.
+A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included for containerised development and deployment.
 
-### Features
+### Quick start
 
-- **Listings marketplace** — browse all RV listings in a responsive card grid
-- **Search & sort** — filter by title/location/description with live client-side search; sort by newest, oldest, price ascending, or price descending
-- **Statistics bar** — live counts of total listings, unique locations, and price range
-- **Authentication** — login and register via modal; JWT is persisted to `localStorage` for simplicity; a production deployment should prefer HttpOnly cookies to mitigate XSS token theft.
-- **Listing management** — authenticated owners can create, edit, and delete their own listings via modal forms
-- **Booking workflow** — hirers can submit a booking request (with start/end date picker) from any listing detail view; owners can confirm or reject pending requests from the Bookings panel
-- **Bookings panel** — dedicated view showing all bookings where the current user is either the hirer or the listing owner
+1. **Copy and fill in secrets**
+   ```bash
+   cp .env.example .env
+   ```
+   Set `RAILS_MASTER_KEY` to the contents of `config/master.key`, and set `JWT_SECRET` to a random secret (`bundle exec rails secret`).
 
-### Accessing the frontend
+2. **Build and start**
+   ```bash
+   docker compose up --build
+   ```
+   The app runs at `http://localhost:3000`. The entrypoint automatically runs `db:prepare` (create + migrate) on first boot.
 
-Start the Rails server and open:
-```
-http://localhost:3000/frontend/index.html
-```
+3. **Stop and remove volumes**
+   ```bash
+   docker compose down -v
+   ```
 
-### Pointing at a different API
+### Services
 
-By default the page talks to the same host it is served from (relative URLs). To point it at a different deployed instance, append `?api=<absolute-url>`:
-```
-http://localhost:3000/frontend/index.html?api=https://your-api.example.com
-```
+| Service | Image | Port |
+|---------|-------|------|
+| `web` | Built from local `Dockerfile` | `3000 → 80` |
+| `db` | `postgres:16-alpine` | internal only |
+
+The `web` service reads `DATABASE_URL`, `RAILS_MASTER_KEY`, and `JWT_SECRET` from the environment (or `.env` file). The database password in `docker-compose.yml` is intentionally simple — override it for any non-local deployment.
 
 ## Development
 
