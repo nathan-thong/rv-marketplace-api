@@ -10,8 +10,38 @@ RSpec.describe Booking, type: :model do
     expect(booking).to be_valid
   end
 
-  it "rejects end_date before or equal start_date" do
+  it "requires start_date" do
+    booking = described_class.new(end_date: Date.today + 2, status: "pending", user: hirer, rv_listing: listing)
+    expect(booking).not_to be_valid
+  end
+
+  it "requires end_date" do
+    booking = described_class.new(start_date: Date.today + 1, status: "pending", user: hirer, rv_listing: listing)
+    expect(booking).not_to be_valid
+  end
+
+  it "rejects invalid status" do
+    booking = described_class.new(start_date: Date.today + 1, end_date: Date.today + 2, status: "maybe", user: hirer, rv_listing: listing)
+    expect(booking).not_to be_valid
+  end
+
+  it "rejects end_date equal to start_date" do
+    booking = described_class.new(start_date: Date.today + 2, end_date: Date.today + 2, status: "pending", user: hirer, rv_listing: listing)
+    expect(booking).not_to be_valid
+  end
+
+  it "rejects end_date before start_date" do
     booking = described_class.new(start_date: Date.today + 2, end_date: Date.today + 1, status: "pending", user: hirer, rv_listing: listing)
     expect(booking).not_to be_valid
+  end
+
+  it "belongs to a user" do
+    expect(described_class.reflect_on_association(:user).macro)
+      .to eq(:belongs_to)
+  end
+
+  it "belongs to a listing" do
+    expect(described_class.reflect_on_association(:rv_listing).macro)
+      .to eq(:belongs_to)
   end
 end

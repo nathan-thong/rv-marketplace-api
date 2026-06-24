@@ -13,7 +13,9 @@ class AuthController < ApplicationController
   end
 
   def login
-    user = User.find_by(email: login_params[:email])
+    email = login_params[:email].to_s.strip.downcase
+    user = User.find_by(email: email)
+
     if user&.authenticate(login_params[:password])
       token = generate_token(user.id)
       render json: {
