@@ -14,7 +14,7 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
 1. **Clone the repository**
    ```bash
    git clone <repo-url>
-   cd rv-marketplace
+   cd rv-marketplace-api
    ```
 
 2. **Install dependencies**
@@ -26,7 +26,7 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
    ```bash
    cp .env.example .env
    ```
-   Edit `.env` with your local database credentials and JWT secret (or run `bundle exec rails secret` to generate one).
+   Edit `.env` with your local database credentials and secrets.
 
 4. **Create and migrate the database**
    ```bash
@@ -38,39 +38,51 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
    ```bash
    bundle exec rails s
    ```
-   The API will be available at `http://localhost:3000`.
+
+Once running:
+
+| URL | Description |
+|-----|-------------|
+| `http://localhost:3000/listings` | API — list all RV listings |
+| `http://localhost:3000/api-docs` | Interactive Swagger documentation |
+| `http://localhost:3000/frontend/index.html` | Frontend UI |
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection URL |
+| `JWT_SECRET` | Yes | Secret for signing JWT tokens. Generate with `bundle exec rails secret` |
+| `SECRET_KEY_BASE` | Production only | Rails secret key base. Generate with `bundle exec rails secret` |
 
 ## API Endpoints
 
 ### Authentication
-- `POST /register` - Register a new user
-- `POST /login` - Login and receive JWT token
+- `POST /register` — Register a new user
+- `POST /login` — Login and receive a JWT token
 
 ### Listings
-- `GET /listings` - List all RV listings
-- `GET /listings/:id` - Show a single listing
-- `POST /listings` - Create a new listing (authenticated)
-- `PUT/PATCH /listings/:id` - Update a listing (owner only)
-- `DELETE /listings/:id` - Delete a listing (owner only)
+- `GET /listings` — List all RV listings
+- `GET /listings/:id` — Show a single listing
+- `POST /listings` — Create a new listing (authenticated)
+- `PUT/PATCH /listings/:id` — Update a listing (owner only)
+- `DELETE /listings/:id` — Delete a listing (owner only)
 
 ### Bookings
-- `POST /listings/:listing_id/bookings` - Create a booking request (authenticated)
-- `GET /bookings` - List user's bookings (as hirer or owner)
-- `PATCH /bookings/:id/confirm` - Confirm a booking (owner only)
-- `PATCH /bookings/:id/reject` - Reject a booking (owner only)
+- `POST /listings/:listing_id/bookings` — Create a booking request (authenticated)
+- `GET /bookings` — List user's bookings (as hirer or owner)
+- `PATCH /bookings/:id/confirm` — Confirm a booking (owner only)
+- `PATCH /bookings/:id/reject` — Reject a booking (owner only)
 
 ### Messages
-- `GET /listings/:listing_id/messages` - List messages for a listing (authenticated participant only)
-- `POST /listings/:listing_id/messages` - Create a message for a listing (authenticated participant only)
+- `GET /listings/:listing_id/messages` — List messages for a listing (authenticated)
+- `POST /listings/:listing_id/messages` — Send a message on a listing (authenticated)
 
-Participant means:
-- The listing owner
-- A user who has a booking on that listing
-
+A user can message on a listing if they are the listing owner or have a booking on it.
 
 ## Authentication
 
-Token-based authentication via JWT. After registering or logging in, include the token in the Authorization header:
+Token-based authentication via JWT. After registering or logging in, include the token in the `Authorization` header:
 ```
 Authorization: Bearer <token>
 ```
@@ -80,25 +92,22 @@ Tokens expire after 24 hours.
 ## Testing
 
 Run the test suite:
-
 ```bash
 bundle exec rspec
 ```
 
 ## API Documentation
 
-Generate documentation:
+Interactive Swagger UI is available at `http://localhost:3000/api-docs` once the server is running.
+
+To regenerate the OpenAPI spec from the RSpec tests:
 ```bash
 bundle exec rake rswag:specs:swaggerize
 ```
 
-Swagger/OpenAPI documentation:
-- http://localhost:3000/api-docs
-
-
 ## Docker
 
-A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included for containerised development and deployment.
+A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included.
 
 ### Quick start
 
@@ -106,18 +115,27 @@ A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included f
    ```bash
    cp .env.example .env
    ```
-   Set `JWT_SECRET` to a random secret (`bundle exec rails secret`).
+   Fill in `SECRET_KEY_BASE` and `JWT_SECRET` — generate values with `bundle exec rails secret`.
 
 2. **Build and start**
    ```bash
    docker compose up --build
    ```
-   The app runs at `http://localhost:3000`. The entrypoint automatically runs `db:prepare` (create + migrate) on first boot.
+   The database is created and migrated automatically on first boot.
 
-3. **Stop and remove volumes**
+3. **Stop**
    ```bash
-   docker compose down -v
+   docker compose down        # keep data
+   docker compose down -v     # remove data volumes too
    ```
+
+Once running, the same URLs apply:
+
+| URL | Description |
+|-----|-------------|
+| `http://localhost:3000/listings` | API |
+| `http://localhost:3000/api-docs` | Swagger UI |
+| `http://localhost:3000/frontend/index.html` | Frontend UI |
 
 ### Services
 
@@ -125,8 +143,6 @@ A `Dockerfile` (production, multi-stage) and `docker-compose.yml` are included f
 |---------|-------|------|
 | `web` | Built from local `Dockerfile` | `3000 → 80` |
 | `db` | `postgres:16-alpine` | internal only |
-
-The `web` service reads `DATABASE_URL` and `JWT_SECRET` from the environment (or `.env` file). The database password in `docker-compose.yml` is intentionally simple — override it for any non-local deployment.
 
 ## Development
 
