@@ -1,10 +1,6 @@
 module Authenticable
   extend ActiveSupport::Concern
 
-  included do
-    before_action :authenticate_user!
-  end
-
   private
 
   def authenticate_user!

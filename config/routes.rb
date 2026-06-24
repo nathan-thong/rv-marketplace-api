@@ -9,6 +9,16 @@ Rails.application.routes.draw do
   post "/register", to: "auth#register"
   post "/login", to: "auth#login"
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Listings
+  resources :listings, only: [ :index, :show, :create, :update, :destroy ] do
+    resources :bookings, only: [ :create ]
+  end
+
+  # Bookings
+  resources :bookings, only: [ :index ] do
+    member do
+      patch :confirm
+      patch :reject
+    end
+  end
 end
