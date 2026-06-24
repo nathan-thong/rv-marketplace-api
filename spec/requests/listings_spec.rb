@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Listings", type: :request do
-  let!(:owner) { User.create!(name: "Owner", email: "owner@example.com", password: "password", password_confirmation: "password") }
-  let!(:other_user) { User.create!(name: "Other", email: "other@example.com", password: "password", password_confirmation: "password") }
+  let!(:owner) { User.create!(name: "Owner", email: unique_email("owner"), password: "password", password_confirmation: "password") }
+  let!(:other_user) { User.create!(name: "Other", email: unique_email("other"), password: "password", password_confirmation: "password") }
   let!(:listing) { RvListing.create!(title: "RV One", description: "Nice", location: "Sydney", price_per_day: 100, user: owner) }
 
   it "lists all listings publicly" do

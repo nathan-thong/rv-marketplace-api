@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Message, type: :model do
-  let(:user) { User.create!(name: "User", email: "user-msg@example.com", password: "password", password_confirmation: "password") }
+  let(:user) { User.create!(name: "User", email: unique_email("user-msg"), password: "password", password_confirmation: "password") }
   let(:listing) { RvListing.create!(title: "RV", description: "Nice", location: "Sydney", price_per_day: 100, user: user) }
 
   it "is valid with content" do

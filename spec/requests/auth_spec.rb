@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Auth", type: :request do
   describe "POST /register" do
     it "registers a user and returns token" do
-      email = "jane-#{SecureRandom.hex(4)}@example.com"
+      email = unique_email("jane")
 
       post "/register", params: {
         user: {
@@ -21,7 +21,7 @@ RSpec.describe "Auth", type: :request do
     end
 
     it "rejects duplicate email" do
-      email = "jane-#{SecureRandom.hex(4)}@example.com"
+      email = unique_email("jane")
       User.create!(name: "Jane", email: email, password: "password", password_confirmation: "password")
 
       post "/register", params: {
@@ -38,7 +38,7 @@ RSpec.describe "Auth", type: :request do
   end
 
   describe "POST /login" do
-    let(:email) { "jane-#{SecureRandom.hex(4)}@example.com" }
+    let(:email) { unique_email("jane") }
     let!(:user) { User.create!(name: "Jane", email: email, password: "password", password_confirmation: "password") }
 
     it "logs in with valid credentials" do
