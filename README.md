@@ -64,8 +64,7 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
 - `POST /listings/:listing_id/messages` - Create a message for a listing (authenticated participant only)
 
 Participant means:
-- The listing owner, 
-or
+- The listing owner
 - A user who has a booking on that listing
 
 
@@ -85,6 +84,17 @@ Run the test suite:
 ```bash
 bundle exec rspec
 ```
+
+## API Documentation
+
+Generate documentation:
+```bash
+bundle exec rake rswag:specs:swaggerize
+```
+
+Swagger/OpenAPI documentation:
+- http://localhost:3000/api-docs
+
 
 ## Development
 
