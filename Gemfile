@@ -41,6 +41,10 @@ gem "image_processing", "~> 1.2"
 # Add dotenv support.
 gem "dotenv-rails"
 
+# Swagger UI — needed in all environments so /api-docs works in production/Docker
+gem "rswag-api"
+gem "rswag-ui"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -55,10 +59,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rspec-rails"
-
-  gem "rswag-api"
-
-  gem "rswag-ui"
 
   gem "rswag-specs"
 end
