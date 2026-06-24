@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Waypoint — RV listings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="wp-nav">
+  <div class="wp-nav__row">
+    <div class="wp-nav__brand">
+      <svg class="wp-nav__mark" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="13" cy="13" r="11.5" stroke="#1F3327" stroke-width="1.4"/>
+        <path d="M13 4.5 L18.5 17 L13 14 L7.5 17 Z" fill="#B6552E"/>
+      </svg>
+      Waypoint
+    </div>
+    <div class="wp-nav__actions" id="wp-nav-actions"></div>
+  </div>
+</nav>
+
+<section class="wp-contour">
+  <div class="wp-shell">
+    <div class="wp-hero">
+      <p class="wp-hero__kicker">RV &amp; Campervan Rentals</p>
+      <h1>Find the rig for your next thousand miles.</h1>
+      <p class="wp-hero__sub">Browse RVs listed by owners near you and send a booking request in minutes.</p>
+
+      <div class="wp-status" id="wp-status" role="status" aria-live="polite">
+        <span class="wp-status__dot" id="wp-status-dot" data-state="idle"></span>
+        <span id="wp-status-text">Connecting…</span>
+        <button type="button" class="wp-status__refresh" id="wp-refresh-btn" aria-label="Refresh listings">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3.4h-3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wp-stats">
+    <div class="wp-stats__row">
+      <div class="wp-stats__item">
+        <div class="wp-stats__num wp-mono" id="wp-stat-count">000</div>
+        <div class="wp-stats__label">Listings loaded</div>
+      </div>
+      <div class="wp-stats__item">
+        <div class="wp-stats__num wp-mono" id="wp-stat-locations">00</div>
+        <div class="wp-stats__label">Locations</div>
+      </div>
+      <div class="wp-stats__item">
+        <div class="wp-stats__num wp-mono" id="wp-stat-range">$0–0</div>
+        <div class="wp-stats__label">Price range / day</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="wp-shell">
+
+  <section id="wp-view-marketplace">
+    <div class="wp-controls">
+      <div class="wp-search">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M13 13 L17.5 17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <label for="wp-search-input" class="wp-sr-only">Search listings by title or location</label>
+        <input id="wp-search-input" type="text" placeholder="Search by title or location" />
+      </div>
+      <div class="wp-sort">
+        <label for="wp-sort-select">Sort</label>
+        <select id="wp-sort-select">
+          <option value="newest">Newest first</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="title">Title: A–Z</option>
+        </select>
+      </div>
+    </div>
+    <p class="wp-count" id="wp-result-count" aria-live="polite"></p>
+
+    <div class="wp-grid" id="wp-grid" style="margin-top:16px;"></div>
+  </section>
+
+  <section id="wp-view-bookings" hidden>
+    <div class="wp-controls">
+      <h2 class="wp-section-title">My bookings</h2>
+      <button type="button" class="wp-btn wp-btn--ghost" id="wp-bookings-refresh">Refresh</button>
+    </div>
+    <p class="wp-count" id="wp-bookings-count" aria-live="polite"></p>
+    <div id="wp-bookings-list" style="margin-top:16px;"></div>
+  </section>
+
+</main>
+
+<footer class="wp-footer">
+  <div class="wp-shell">
+    <p>Waypoint — front end for the RV Marketplace API technical test. No data is stored by this page beyond your login session; every listing and booking is fetched live.</p>
+  </div>
+</footer>
+
+<!-- Listing detail modal -->
+<div class="wp-overlay" id="wp-overlay" hidden>
+  <div class="wp-modal" role="dialog" aria-modal="true" aria-labelledby="wp-modal-title" id="wp-modal">
+    <button class="wp-modal__close" id="wp-modal-close" aria-label="Close listing details">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 5 L15 15 M15 5 L5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div id="wp-modal-body"></div>
+  </div>
+</div>
+
+<!-- Auth modal: log in / create account -->
+<div class="wp-overlay" id="wp-auth-overlay" hidden>
+  <div class="wp-modal wp-modal--narrow" role="dialog" aria-modal="true" aria-labelledby="wp-auth-title" id="wp-auth-modal">
+    <button class="wp-modal__close" id="wp-auth-close" aria-label="Close">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 5 L15 15 M15 5 L5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <h2 id="wp-auth-title" class="wp-sr-only">Account access</h2>
+    <div class="wp-tabs" role="tablist">
+      <button type="button" class="wp-tabs__btn is-active" id="wp-tab-login" role="tab" aria-selected="true">Log in</button>
+      <button type="button" class="wp-tabs__btn" id="wp-tab-register" role="tab" aria-selected="false">Create account</button>
+    </div>
+
+    <form class="wp-form" id="wp-login-form">
+      <div class="wp-field">
+        <label for="wp-login-email">Email</label>
+        <input id="wp-login-email" type="email" required autocomplete="username" />
+      </div>
+      <div class="wp-field">
+        <label for="wp-login-password">Password</label>
+        <input id="wp-login-password" type="password" required autocomplete="current-password" />
+      </div>
+      <p class="wp-form__error" id="wp-login-error" role="alert"></p>
+      <button type="submit" class="wp-btn wp-btn--rust" id="wp-login-submit">Log in</button>
+    </form>
+
+    <form class="wp-form" id="wp-register-form" hidden>
+      <div class="wp-field">
+        <label for="wp-register-name">Name</label>
+        <input id="wp-register-name" type="text" required autocomplete="name" />
+      </div>
+      <div class="wp-field">
+        <label for="wp-register-email">Email</label>
+        <input id="wp-register-email" type="email" required autocomplete="email" />
+      </div>
+      <div class="wp-field">
+        <label for="wp-register-password">Password</label>
+        <input id="wp-register-password" type="password" required autocomplete="new-password" />
+      </div>
+      <div class="wp-field">
+        <label for="wp-register-password-confirmation">Confirm password</label>
+        <input id="wp-register-password-confirmation" type="password" required autocomplete="new-password" />
+      </div>
+      <p class="wp-form__error" id="wp-register-error" role="alert"></p>
+      <button type="submit" class="wp-btn wp-btn--rust" id="wp-register-submit">Create account</button>
+    </form>
+  </div>
+</div>
+
+<!-- Create / edit listing modal -->
+<div class="wp-overlay" id="wp-listing-overlay" hidden>
+  <div class="wp-modal" role="dialog" aria-modal="true" aria-labelledby="wp-listing-title" id="wp-listing-modal">
+    <button class="wp-modal__close" id="wp-listing-close" aria-label="Close">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 5 L15 15 M15 5 L5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <h2 id="wp-listing-title">List your RV</h2>
+    <form class="wp-form" id="wp-listing-form">
+      <div class="wp-field">
+        <label for="wp-listing-title-input">Title</label>
+        <input id="wp-listing-title-input" type="text" required maxlength="120" placeholder="1998 Winnebago Adventurer" />
+      </div>
+      <div class="wp-field">
+        <label for="wp-listing-location-input">Location</label>
+        <input id="wp-listing-location-input" type="text" required maxlength="120" placeholder="Newcastle, NSW" />
+      </div>
+      <div class="wp-field wp-field--currency">
+        <label for="wp-listing-price-input">Price per day</label>
+        <div class="wp-field__currency-wrap">
+          <span class="wp-field__currency-symbol">$</span>
+          <input id="wp-listing-price-input" type="number" required min="1" max="100000" step="1" placeholder="150" />
+        </div>
+      </div>
+      <div class="wp-field">
+        <label for="wp-listing-description-input">Description</label>
+        <textarea id="wp-listing-description-input" rows="4" required maxlength="2000" placeholder="What makes this rig worth taking out?"></textarea>
+      </div>
+      <p class="wp-form__error" id="wp-listing-error" role="alert"></p>
+      <div class="wp-form-actions">
+        <button type="submit" class="wp-btn wp-btn--rust" id="wp-listing-submit">Publish listing</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
