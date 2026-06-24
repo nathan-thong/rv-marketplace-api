@@ -42,6 +42,10 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
 
 ## API Endpoints
 
+### Authentication
+- `POST /register` - Register a new user
+- `POST /login` - Login and receive JWT token
+
 ### Listings
 - `GET /listings` - List all RV listings
 - `GET /listings/:id` - Show a single listing
@@ -57,15 +61,17 @@ A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Co
 
 ## Authentication
 
-Token-based authentication via JWT. Include the token in the Authorization header:
+Token-based authentication via JWT. After registering or logging in, include the token in the Authorization header:
 ```
 Authorization: Bearer <token>
 ```
 
+Tokens expire after 24 hours.
+
 ## Testing
 
 ```bash
-bundle exec rspec
+bundle exec rails test
 ```
 
 ## Development
