@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: rv_marketplace
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rv_marketplace_production
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rv_marketplace"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "3000:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://rv_marketplace:password@db:5432/rv_marketplace_production
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      JWT_SECRET: ${JWT_SECRET:-change-me-generate-with-rails-secret}
+
+volumes:
+  postgres_data:
