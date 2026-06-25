@@ -78,7 +78,7 @@ Once running:
 - `GET /listings/:listing_id/messages` — List messages for a listing (authenticated)
 - `POST /listings/:listing_id/messages` — Send a message on a listing (authenticated)
 
-A user can message on a listing if they are the listing owner or have a booking on it.
+Any authenticated user can send and view messages on a listing.
 
 ## Authentication
 
