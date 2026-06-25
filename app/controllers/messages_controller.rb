@@ -3,7 +3,6 @@ class MessagesController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_listing
-  before_action :authorize_listing_participant!, only: [ :index, :create ]
 
   # GET /listings/:listing_id/messages
   def index
@@ -35,13 +34,6 @@ class MessagesController < ApplicationController
     @listing = RvListing.find(params[:listing_id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Listing not found" }, status: :not_found
-  end
-
-  def authorize_listing_participant!
-    return if @listing.user_id == current_user.id
-    return if @listing.bookings.exists?(user_id: current_user.id)
-
-    render json: { error: "Unauthorized" }, status: :forbidden
   end
 
   def message_params
