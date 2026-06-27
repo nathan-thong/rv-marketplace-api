@@ -2,6 +2,16 @@
 
 A RESTful API for a two-sided RV rental marketplace built with Ruby on Rails. Connects RV owners (lessors) with renters (hirers) for listing management, lead generation, messaging, and booking requests.
 
+## Frontend Preview
+
+![Waypoint frontend](public/frontend/rv-marketplace-example.png)
+
+## Quick Start
+
+**Docker (recommended):** No local Ruby or PostgreSQL needed — see [Docker](#docker) below.
+
+**Local:** Requires Ruby 3.3.11 and PostgreSQL 12+ — see [Setup](#setup) below.
+
 ## Requirements
 
 - Ruby 3.3.11
