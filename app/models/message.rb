@@ -6,6 +6,14 @@ class Message < ApplicationRecord
   validates :content, presence: true
   validate :recipient_is_not_sender
 
+  def sender_name
+    user.name
+  end
+
+  def recipient_name
+    recipient.name
+  end
+
   private
 
   def recipient_is_not_sender

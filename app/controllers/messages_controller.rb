@@ -6,10 +6,12 @@ class MessagesController < ApplicationController
 
   rescue_from ActionController::ParameterMissing, with: :render_missing_recipient
 
+  MESSAGE_JSON_OPTIONS = { only: [ :id, :content, :created_at, :updated_at, :user_id, :recipient_id ], methods: [ :sender_name, :recipient_name ] }.freeze
+
   # GET /listings/:listing_id/messages
   def index
-    messages = thread_scope.order(created_at: :asc)
-    render json: messages.as_json(only: [ :id, :content, :created_at, :updated_at, :user_id, :recipient_id ]), status: :ok
+    messages = thread_scope.includes(:user, :recipient).order(created_at: :asc)
+    render json: messages.as_json(MESSAGE_JSON_OPTIONS), status: :ok
   end
 
   # POST /listings/:listing_id/messages
@@ -19,7 +21,7 @@ class MessagesController < ApplicationController
     message.recipient_id = resolve_recipient_id
 
     if message.save
-      render json: message.as_json(only: [ :id, :content, :created_at, :updated_at, :user_id, :recipient_id ]), status: :created
+      render json: message.as_json(MESSAGE_JSON_OPTIONS), status: :created
     else
       render json: { errors: message.errors }, status: :unprocessable_entity
     end

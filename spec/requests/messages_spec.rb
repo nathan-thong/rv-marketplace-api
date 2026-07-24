@@ -16,6 +16,8 @@ RSpec.describe "Messages", type: :request do
     body = JSON.parse(response.body)
     expect(body["user_id"]).to eq(user.id)
     expect(body["recipient_id"]).to eq(owner.id)
+    expect(body["sender_name"]).to eq(user.name)
+    expect(body["recipient_name"]).to eq(owner.name)
   end
 
   it "ignores a client-supplied recipient_id for a non-owner sender" do
