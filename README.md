@@ -84,11 +84,13 @@ Once running:
 - `PATCH /bookings/:id/confirm` — Confirm a booking (owner only)
 - `PATCH /bookings/:id/reject` — Reject a booking (owner only)
 
+Overlapping (or identical) date ranges on the same listing are rejected for any `pending` or `confirmed` booking — `rejected` bookings don't block. Same-day turnover is allowed (one booking's checkout date can equal another's check-in date). This is enforced twice: an app-level validation for a fast, friendly `422`, and a Postgres exclusion constraint (`btree_gist`) as a race-proof backstop, so two concurrent requests can't both slip past the app-level check.
+
 ### Messages
-- `GET /listings/:listing_id/messages` — List messages for a listing (authenticated)
+- `GET /listings/:listing_id/messages` — List the authenticated user's own thread on a listing (or every thread, if they're the listing owner)
 - `POST /listings/:listing_id/messages` — Send a message on a listing (authenticated)
 
-Any authenticated user can send and view messages on a listing.
+Any authenticated user can start a conversation about a listing (not just people with an existing booking), but a thread is only visible to its two participants — the listing owner sees every thread on their own listing, everyone else sees only the thread they're part of. Each message has a `recipient_id` alongside `user_id`, since a listing can have several independent conversations running at once and `user_id` alone only tells you who sent a message, not who it's addressed to. For a renter, the recipient is always the listing owner; when the owner replies, they specify which participant's thread they're replying in via `recipient_id`. Sender/recipient `id`s are returned in responses; `email` is never included.
 
 ## Authentication
 

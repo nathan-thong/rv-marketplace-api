@@ -9,15 +9,18 @@ RSpec.describe "Messages API", type: :request do
       produces "application/json"
       security [ bearerAuth: [] ]
 
-      response "200", "authenticated user can list messages" do
+      response "200", "authenticated participant can list their own thread (no email exposed)" do
         let!(:owner) { User.create!(name: "Owner", email: unique_email("owner-msg-index"), password: "password", password_confirmation: "password") }
         let!(:user) { User.create!(name: "User", email: unique_email("user-msg-index"), password: "password", password_confirmation: "password") }
         let!(:listing) { RvListing.create!(title: "RV", description: "Nice", location: "Sydney", price_per_day: 100, user: owner) }
+        let!(:message) { Message.create!(content: "Is this available?", user: user, rv_listing: listing, recipient: owner) }
 
         let(:listing_id) { listing.id }
         let(:Authorization) { auth_headers(user)["Authorization"] }
 
-        run_test!
+        run_test! do |response|
+          expect(response.body).not_to include("email")
+        end
       end
 
       response "401", "unauthenticated request rejected" do

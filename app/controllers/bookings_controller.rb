@@ -16,11 +16,18 @@ class BookingsController < ApplicationController
     booking = @listing.bookings.build(booking_params)
     booking.user = current_user
 
-    if booking.save
-      render json: booking, status: :created
-    else
-      render json: { errors: booking.errors }, status: :unprocessable_entity
+    ActiveRecord::Base.transaction do
+      @listing.lock!
+      booking.save!
     end
+
+    render json: booking, status: :created
+  rescue ActiveRecord::RecordInvalid
+    render json: { errors: booking.errors }, status: :unprocessable_entity
+  rescue ActiveRecord::StatementInvalid => e
+    raise unless e.cause.is_a?(PG::ExclusionViolation)
+
+    render json: { errors: { base: [ "These dates are not available for this listing" ] } }, status: :unprocessable_entity
   end
 
   # GET /bookings
