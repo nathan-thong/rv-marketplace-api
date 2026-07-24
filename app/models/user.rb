@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_many :rv_listings, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_many :messages, dependent: :destroy
+  has_many :received_messages, class_name: "Message", foreign_key: :recipient_id, dependent: :destroy, inverse_of: :recipient
 
   has_secure_password
 
