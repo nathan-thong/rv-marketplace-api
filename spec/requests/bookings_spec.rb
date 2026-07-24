@@ -106,4 +106,21 @@ RSpec.describe "Bookings", type: :request do
 
     expect(response).to have_http_status(:not_found)
   end
+
+  it "rejects a second booking with overlapping dates on the same listing" do
+    post "/listings/#{listing.id}/bookings",
+      params: { booking: { start_date: Date.today + 20, end_date: Date.today + 25 } },
+      headers: auth_headers(hirer),
+      as: :json
+    expect(response).to have_http_status(:created)
+
+    post "/listings/#{listing.id}/bookings",
+      params: { booking: { start_date: Date.today + 22, end_date: Date.today + 27 } },
+      headers: auth_headers(other),
+      as: :json
+
+    expect(response).to have_http_status(:unprocessable_content)
+    body = JSON.parse(response.body)
+    expect(body["errors"]["base"]).to include("These dates are not available for this listing")
+  end
 end

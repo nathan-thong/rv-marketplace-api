@@ -46,6 +46,20 @@ RSpec.describe "Bookings API", type: :request do
 
         run_test!
       end
+
+      response "422", "dates overlap an existing booking on the same listing" do
+        let!(:owner) { User.create!(name: "Owner", email: unique_email("owner-overlap-book"), password: "password", password_confirmation: "password") }
+        let!(:hirer) { User.create!(name: "Hirer", email: unique_email("hirer-overlap-book"), password: "password", password_confirmation: "password") }
+        let!(:other) { User.create!(name: "Other", email: unique_email("other-overlap-book"), password: "password", password_confirmation: "password") }
+        let!(:listing) { RvListing.create!(title: "RV", description: "Nice", location: "Sydney", price_per_day: 100, user: owner) }
+        let!(:existing) { Booking.create!(start_date: Date.today + 1, end_date: Date.today + 5, status: "pending", user: hirer, rv_listing: listing) }
+
+        let(:listing_id) { listing.id }
+        let(:Authorization) { auth_headers(other)["Authorization"] }
+        let(:payload) { { booking: { start_date: Date.today + 3, end_date: Date.today + 6 } } }
+
+        run_test!
+      end
     end
   end
 

@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_23_132203) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_22_100001) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
 
   create_table "bookings", force: :cascade do |t|
@@ -24,14 +25,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_132203) do
     t.bigint "user_id", null: false
     t.index ["rv_listing_id"], name: "index_bookings_on_rv_listing_id"
     t.index ["user_id"], name: "index_bookings_on_user_id"
+    t.exclusion_constraint "rv_listing_id WITH =, daterange(start_date, end_date, '[)'::text) WITH &&", where: "(status)::text = ANY ((ARRAY['pending'::character varying, 'confirmed'::character varying])::text[])", using: :gist, name: "bookings_no_overlapping_ranges"
   end
 
   create_table "messages", force: :cascade do |t|
     t.text "content", null: false
     t.datetime "created_at", null: false
+    t.bigint "recipient_id"
     t.bigint "rv_listing_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["recipient_id"], name: "index_messages_on_recipient_id"
     t.index ["rv_listing_id"], name: "index_messages_on_rv_listing_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
@@ -60,5 +64,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_132203) do
   add_foreign_key "bookings", "users"
   add_foreign_key "messages", "rv_listings"
   add_foreign_key "messages", "users"
+  add_foreign_key "messages", "users", column: "recipient_id"
   add_foreign_key "rv_listings", "users"
 end
