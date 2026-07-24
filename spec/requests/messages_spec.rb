@@ -39,7 +39,9 @@ RSpec.describe "Messages", type: :request do
     expect(response).to have_http_status(:unprocessable_content)
   end
 
-  it "lets the owner reply to a specific participant" do
+  it "lets the owner reply to a participant who has already messaged the listing" do
+    Message.create!(content: "Is this available?", user: user, rv_listing: listing, recipient: owner)
+
     post "/listings/#{listing.id}/messages",
       params: { message: { content: "Sure, it's available", recipient_id: user.id } },
       headers: auth_headers(owner),
@@ -47,6 +49,17 @@ RSpec.describe "Messages", type: :request do
 
     expect(response).to have_http_status(:created)
     expect(JSON.parse(response.body)["recipient_id"]).to eq(user.id)
+  end
+
+  it "blocks the owner from replying to a user who has never messaged the listing" do
+    post "/listings/#{listing.id}/messages",
+      params: { message: { content: "Hey, want to book?", recipient_id: stranger.id } },
+      headers: auth_headers(owner),
+      as: :json
+
+    expect(response).to have_http_status(:unprocessable_content)
+    body = JSON.parse(response.body)
+    expect(body["errors"]["recipient_id"]).to include("must be a user who has already messaged this listing")
   end
 
   it "blocks unauthenticated users from creating messages" do
